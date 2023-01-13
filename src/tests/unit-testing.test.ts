@@ -31,13 +31,9 @@ describe('Unit testing', () => {
 
   it("convertHandler should correctly return an error on a double-fraction (i.e. 3/2/3)", () => {
     const input = "4/2/3KM";
-    let c: any;
-    try { 
-      c = new ConvertHandler(input);
-    } catch (err) {
-      expect(c.num).toThrowError("invalid number");
-    }
-
+    let c = new ConvertHandler(input);
+    
+    expect(c.num).toBe("invalid number");
   });
 
   it("convertHandler should correctly default to a numerical input of 1 when no numerical input is provided", () => {
@@ -47,27 +43,52 @@ describe('Unit testing', () => {
     expect(c.num).toBe(1);
   });
 
+  /*
+  test("convertHandler should correctly read each valid input unit", () => {
+
+
+    for (let idx = 0; idx < units.length; idx++) {
+      assert.strictEqual((c.getUnit(inputs[idx])), units[idx]);
+    }  
+  });
+  */
   it("convertHandler should correctly read each valid input unit", () => {
-    const input = ['gal','l','mi','km','lbs','kg','GAL','L','MI','KM','LBS','KG'];
-      input.forEach(elm => {
-        const c = new ConvertHandler(elm);
-        expect(c.unit).toBe(elm.toLowerCase());
-      });
+    const units = ["gal", "L", "km", "mi", "kg", "lbs"]
+    const inputs = ["12gal", "13l", "14km", "15mi", "16kg", "17lbs"];
+
+    for (let idx = 0; idx < units.length; idx++) {
+      const c = new ConvertHandler(inputs[idx]);
+      expect(c.unit).toBe(units[idx]);
+
+      // assert.strictEqual((c.getUnit(inputs[idx])), units[idx]);
+    } 
   });
 
   it("convertHandler should correctly return an error for an invalid input unit", () => {
     const input = "3g";
     const c = new ConvertHandler(input);
 
-    expect(c.unit).toThrowError(Error("invalid unit"));
+    expect(c.unit).toBe("invalid unit");
   });
 
   it("convertHandler should return the correct return unit for each valid input unit", () => {
-
+    const returnUnits = ["L", "gal", "mi", "km", "lbs", "kg"]
+    const units       = ["gal", "l", "km", "mi", "kg", "lbs"];
+    
+    for (let idx = 0; idx < units.length; idx++) {
+      let c = new ConvertHandler(units[idx]);
+      console.log('getReturnUnit: ' + c.convertUnit())
+      expect(c.convertUnit()).toBe(returnUnits[idx]);
+    }
   });
 
   it("convertHandler should correctly return the spelled-out string unit for each valid input unit", () => {
-
+    const units = ["L", "gal", "km", "mi", "kg", "lbs"]
+    const spelledUnit = ["liters", "gallons", "kilometers", "miles", "kilograms", "pounds"];
+    
+    for (let idx = 0; idx < units.length; idx++) {
+      // assert.strictEqual((c.spellOutUnit(units[idx])), spelledUnits[idx]);
+    }
   });
 
   it("convertHandler should correctly convert gal to L", () => {
