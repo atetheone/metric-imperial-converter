@@ -12,9 +12,20 @@ const apiRouter = Router();
 apiRouter.get("/api/convert", (req: Request, res: Response) => {
   const {input} = req.query;
   
-  const toConvert: ConvertHandler = new ConvertHandler(input)
+  const convertHandler: ConvertHandler = new ConvertHandler(input)
   // console.log(toConvert.num);
 
+  const initNum    = convertHandler.num;
+  const initUnit   = convertHandler.unit;
+
+    if (initNum === "invalid number" && initUnit === "invalid unit")
+      return res.json({error: "invalid number and unit"});
+
+    if (initNum === "invalid number") 
+      return res.json({ error: "invalid number" });
+    
+    if (initUnit === "invalid unit") 
+      return res.json({ error: "invalid unit" });
   /**
    * response
    * { 
@@ -25,7 +36,7 @@ apiRouter.get("/api/convert", (req: Request, res: Response) => {
    *    string: '3.1 miles converts to 4.98895 kilometers' 
    * }
    */
-  res.json(toConvert.getResult());
+  res.json(convertHandler.getResult());
 });
 
 export { apiRouter };
