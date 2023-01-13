@@ -2,11 +2,8 @@ export class ConvertHandler {
   private static galToL = 3.78541;
   private static lbsToKg = 0.453592;
   private static miToKm = 1.60934;
-  private static kgToLbs = 2.20462;
-  private static lToGal = 0.26417;
-  private static kmToMi = 0.62137;
-  private static inputUnit = ["gal", "l", "mi", "km", "lbs", "kg"];
-  private static convertUnit = [this.galToL, this.lToGal, this.miToKm, this.kmToMi, this.lbsToKg, this.kgToLbs];
+  private static inputUnit = ["gal", "L", "mi", "km", "lbs", "kg"];
+  private static convertUnit = [this.galToL, 1 / this.galToL, this.miToKm, 1 / this.miToKm, this.lbsToKg, 1 / this.lbsToKg];
   
   private _num?: number;
   private _unit?: string;
@@ -15,16 +12,16 @@ export class ConvertHandler {
     this.input = input.toLowerCase();
   }
 
-  get num(): number {
+  get num(): any {
     let num = (this.input.match(/[0-9/.]+/g) || [])[0];
 
     if (num === undefined) num = "1";
-    if (num.split("/")[2]) throw new Error("invalid number");
+    if (num.split("/")[2]) return "invalid number";
 
     try {
       num = eval(num);
     } catch (e) {
-      throw new Error("invalid number");
+      return "invalid number";
     }
 
     return parseFloat(num.toFixed(5));
@@ -36,22 +33,33 @@ export class ConvertHandler {
       if (char.match(/[A-Za-z]/)) break;
       idx++;
     }
-    const result = this.input.substring(idx);
+
+    const result = this.input.substr(idx);
+
+    for (let unit of ConvertHandler.inputUnit) {
+      if (result === "l") return "L";
+      if (unit === result) return result;
+    } 
+    return "invalid unit";
+    /*let idx = 0;
+    for (let char of this.input) {
+      if (char.match(/[A-Za-z]/)) break;
+      idx++;
+    }
+    const result = this.input.substr(idx);
 
     ConvertHandler.inputUnit.forEach(unit => {
       if (unit === result) return result;
     }) 
-    return ""
-
-    // throw new Error("invalid unit");
+    return "invalid unit";*/
   }
 
-  private convertUnit() {
+  convertUnit() {
     let conversion: any = {
       "kg": "lbs",
       "lbs": "kg",
       "gal": "L",
-      "l": "gal",
+      "L": "gal",
       "km": "mi",
       "mi": "km"
     };
@@ -83,7 +91,7 @@ export class ConvertHandler {
       kg: "kilograms",
       lbs: "pounds",
       gal: "gallons",
-      l: "liters",
+      L: "liters",
       km: "kilometers",
       mi: "miles"
     };
